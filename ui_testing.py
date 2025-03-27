@@ -94,3 +94,24 @@ def test_remove_from_cart():
         page.click("#remove-sauce-labs-backpack")
         expect(page.locator(".cart_item")).not_to_be_visible()
         browser.close()
+
+def test_checkout_process():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("standard_user", "secret_sauce")
+        page.click('#item_4_title_link')
+        page.click('#add-to-cart')
+        page.goto('https://www.saucedemo.com/cart.html')
+        page.click('#checkout')
+        page.fill('#first-name', "Name")
+        page.fill('#last-name' , "Surname")
+        page.fill("#postal-code", "12345")
+        page.click('#continue')
+        page.click("#finish")
+        confirmation_msg = page.locator("h2", has_text="Thank you for your order!")
+        expect(confirmation_msg).to_be_visible()
+        browser.close()
+
