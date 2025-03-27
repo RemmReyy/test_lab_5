@@ -80,3 +80,17 @@ def test_add_to_the_cart():
         item_name = page.locator(".inventory_item_name")
         expect(item_name).to_have_text("Sauce Labs Backpack")
         browser.close()
+
+def test_remove_from_cart():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("standard_user", "secret_sauce")
+        page.click('#item_4_title_link')
+        page.click('#add-to-cart')
+        page.goto('https://www.saucedemo.com/cart.html')
+        page.click("#remove-sauce-labs-backpack")
+        expect(page.locator(".cart_item")).not_to_be_visible()
+        browser.close()
