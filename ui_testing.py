@@ -67,4 +67,16 @@ def test_product_page():
         page.click('#item_4_title_link')
         expect(page).to_have_url('https://www.saucedemo.com/inventory-item.html?id=4')
 
-
+def test_add_to_the_cart():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("standard_user", "secret_sauce")
+        page.click('#item_4_title_link')
+        page.click('#add-to-cart')
+        page.goto('https://www.saucedemo.com/cart.html')
+        item_name = page.locator(".inventory_item_name")
+        expect(item_name).to_have_text("Sauce Labs Backpack")
+        browser.close()
