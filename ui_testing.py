@@ -115,3 +115,25 @@ def test_checkout_process():
         expect(confirmation_msg).to_be_visible()
         browser.close()
 
+def test_logout():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("standard_user", "secret_sauce")
+        page.click("#react-burger-menu-btn")
+        page.click("#logout_sidebar_link")
+        expect(page).to_have_url("https://www.saucedemo.com/")
+        browser.close()
+
+def test_locked_user_login():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("locked_out_user", "secret_sauce")
+        error_msg = page.locator("h3", has_text="Epic sadface: Sorry, this user has been locked out.")
+        expect(error_msg).to_be_visible()
+        browser.close()
