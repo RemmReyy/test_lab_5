@@ -57,5 +57,14 @@ def test_burger_menu():
         expect(page.locator(".bm-menu-wrap")).to_have_attribute("aria-hidden", "false")
         browser.close()
 
+def test_product_page():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        login_page = LoginPage(page)
+        login_page.navigate()
+        login_page.login("standard_user", "secret_sauce")
+        page.click('#item_4_title_link')
+        expect(page).to_have_url('https://www.saucedemo.com/inventory-item.html?id=4')
 
 
